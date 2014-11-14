@@ -1,3 +1,7 @@
+"""
+version 1.0
+date 2014-10-09
+"""
 #-*-coding:utf-8-*-
 from PIL import Image
 from PIL import ImageEnhance,ImageFilter

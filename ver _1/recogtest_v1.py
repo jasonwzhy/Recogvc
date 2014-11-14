@@ -1,3 +1,7 @@
+"""
+version 1.0
+date 2014-10-09
+"""
 #-*-coding:utf-8-*-
 import VCrecognition
 #img_path = "/Users/jasonwzhy/work/brandbigdata/verifycode/gsxt.saic.gov.cn/sichuan/ztxy4.jpeg"#图片路径

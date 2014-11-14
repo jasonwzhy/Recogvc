@@ -2,27 +2,21 @@
 from PIL import Image
 from PIL import ImageEnhance,ImageFilter
 from pytesseract import image_to_string
+
 class Recog(object):
 	"""Rrecog"""
-	def __init__(self,province = '', img_path = '', verify_type = ''):
+	def __init__(self, img_path = '', verify_type = 0):
 		super(Recog, self).__init__()
 		self.ret=''
-		if province is '' or img_path is '' or verify_type is 0:
+		if img_path is '' or verify_type is 0:
 			raise Exception("The img path is error or verify_type is no define")
 		try:
 			self.img = Image.open(img_path)
 		except IOError, e:
 			raise e
+		#self.verify_type(verify_type)
 		self.verify_type = int(verify_type)
-		self.province = province
 	def do_unverify(self):
-		self.gsxtdic.get(self.province)(self)
-		return self.ret
-		"""try:
-			self.gsxtdic.get('beijing')(self)
-		except Exception, e:
-			raise Exception("The province error")"""
-	def do_ztxy(self):
 		if self.verify_type is 1:	#recongnithion chinese
 			cnoise_img = ClearNoise(self.img).clearNoise()
 			ret = image_to_string(cnoise_img,lang="chi_sim")
@@ -31,53 +25,6 @@ class Recog(object):
 			cnoise_img = ClearNoise(self.img).clearNoise()
 			self.ret = ComputeTypeRecog(cnoise_img).doCount()
 		return self.ret
-	def do_mzImgexppwd(self):
-		if self.verify_type is 1:
-			self.img=self.img.convert("L")
-			img_enhance = ImgEnhance(self.img)
-			imgenh = img_enhance.smooth(4)
-			imgenh = img_enhance.cutimg(20,5,145,45)
-			imgenh = ClearNoise(imgenh).clearNoise()
-			ret = image_to_string(imgenh)
-			optim = OptimizeRet()
-			self.ret = optim.lettersFormat(ret)
-			self.ret = self.ret.decode('utf-8')
-		return self.ret
-	def do_undefined(self):
-		return ''
-	gsxtdic = {
-		"sichuan":do_ztxy,
-		"xinjiang":do_ztxy,
-		"beijing":do_mzImgexppwd,
-		"tianjin":do_undefined,
-		"hebei":do_undefined,
-		"shanghai":do_undefined,
-		"fujian":do_undefined,
-		"yunnan":do_undefined,
-		"shanxi":do_undefined,#山西
-		"neimenggu":do_undefined,
-		"guangdong":do_undefined,
-		"hainan":do_undefined,
-		"liaoning":do_undefined,
-		"jilin":do_undefined,
-		"shandong":do_undefined,
-		"heilongjiang":do_undefined,
-		"anhui":do_undefined,
-		"guangxi":do_undefined,
-		"henan":do_undefined,
-		"xizang":do_undefined,
-		"qinghai":do_undefined,
-		"jiangsu":do_undefined,
-		"zhejiang":do_undefined,
-		"jiangxi":do_undefined,
-		"ningxia":do_undefined,
-		"chongqing":do_undefined,
-		"guizhou":do_undefined,
-		"shaanxi":do_undefined,#陕西
-		"gansu":do_undefined,
-		"hubei":do_undefined,
-		"hunan":do_undefined
-	}
 class ComputeTypeRecog(object):
 	"""Reccompute"""
 	def __init__(self, img_obj):
@@ -159,26 +106,5 @@ class ClearNoise(object):
 					elif rgb == 2 and pixels[x,y][rgb] > 0:
 						pixels[x,y] = (255,255,255)
 		img = img.convert('L')
+		img.show()
 		return img
-
-class ImgEnhance(object):
-	"""The Enhance Image """
-	def __init__(self,img):
-		super(ImgEnhance,self).__init__()
-		self.img = img
-	def smooth(self,deep):
-		for x in xrange(deep):
-			self.img = self.img.filter(ImageFilter.SMOOTH)
-		return self.img
-	def cutimg(self,left, upper, right, lower):
-		#box = (20,5,145,45)
-		box = (left, upper, right, lower)
-		self.img = self.img.crop(box)
-		return self.img
-class OptimizeRet(object):
-	def __init__(self):
-		super(OptimizeRet,self).__init__()
-	def lettersFormat(self,ret):
-		retlst = list(ret)
-		return "".join([ritem for ritem in retlst if ritem.isalpha() or ritem.isdigit()])
-		
